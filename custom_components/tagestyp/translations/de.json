@@ -1,0 +1,186 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Tagestyp",
+        "description": "Land für die gesetzlichen Feiertage.",
+        "data": {
+          "country": "Land"
+        }
+      },
+      "details": {
+        "title": "Region und Optionen",
+        "data": {
+          "subdivision": "Bundesland / Kanton",
+          "language": "Sprache der Feiertagsnamen",
+          "extra_holidays": "Zusatzfeiertage",
+          "school_holidays": "Schulferien anzeigen"
+        },
+        "data_description": {
+          "extra_holidays": "Eine Angabe pro Zeile: TT.MM.JJJJ oder Bereich TT.MM.JJJJ,TT.MM.JJJJ (z. B. Betriebsurlaub). JJJJ-MM-TT geht auch."
+        }
+      }
+    },
+    "error": {
+      "invalid_subdivision": "Unbekanntes Bundesland/Kanton.",
+      "invalid_extra_holidays": "Ungültige Zusatzfeiertage (Format TT.MM.JJJJ oder TT.MM.JJJJ,TT.MM.JJJJ)."
+    },
+    "abort": {
+      "single_instance_allowed": "Es ist nur ein Eintrag erlaubt. Personen werden dort hinzugefügt."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Einstellungen",
+        "description": "Das Land kann nicht geändert werden.",
+        "data": {
+          "subdivision": "Bundesland / Kanton",
+          "language": "Sprache der Feiertagsnamen",
+          "extra_holidays": "Zusatzfeiertage",
+          "school_holidays": "Schulferien anzeigen"
+        },
+        "data_description": {
+          "extra_holidays": "Eine Angabe pro Zeile: TT.MM.JJJJ oder Bereich TT.MM.JJJJ,TT.MM.JJJJ (z. B. Betriebsurlaub). JJJJ-MM-TT geht auch."
+        }
+      }
+    },
+    "error": {
+      "invalid_subdivision": "Unbekanntes Bundesland/Kanton.",
+      "invalid_extra_holidays": "Ungültige Zusatzfeiertage (Format TT.MM.JJJJ oder TT.MM.JJJJ,TT.MM.JJJJ)."
+    }
+  },
+  "config_subentries": {
+    "person": {
+      "entry_type": "Person",
+      "initiate_flow": {
+        "user": "Person hinzufügen",
+        "reconfigure": "Person bearbeiten"
+      },
+      "step": {
+        "user": {
+          "title": "Person",
+          "data": {
+            "person": "Person",
+            "calendar": "Kalender (optional)"
+          }
+        },
+        "menu": {
+          "title": "Regeln für {person}",
+          "description": "Aktuelle Regeln:\n{rules}",
+          "menu_options": {
+            "edit_calendar": "Kalender ändern",
+            "add_rule": "Regel hinzufügen",
+            "remove_rule": "Regel entfernen",
+            "finish": "Speichern"
+          }
+        },
+        "edit_calendar": {
+          "title": "Kalender",
+          "data": {
+            "calendar": "Kalender (optional)"
+          }
+        },
+        "add_rule": {
+          "title": "Regel hinzufügen",
+          "data": {
+            "search": "Suchstring im Termintitel",
+            "type": "Bedeutung",
+            "mode": "Vergleich"
+          }
+        },
+        "remove_rule": {
+          "title": "Regeln entfernen",
+          "data": {
+            "rules": "Zu entfernende Regeln"
+          }
+        }
+      },
+      "error": {
+        "already_configured": "Diese Person ist bereits eingerichtet.",
+        "empty_search": "Der Suchstring darf nicht leer sein."
+      },
+      "abort": {
+        "reconfigure_successful": "Person gespeichert."
+      }
+    }
+  },
+  "selector": {
+    "country": {
+      "options": {
+        "AT": "Österreich",
+        "DE": "Deutschland",
+        "CH": "Schweiz"
+      }
+    },
+    "type": {
+      "options": {
+        "arbeit": "Arbeit",
+        "frei": "Frei",
+        "urlaub": "Urlaub"
+      }
+    },
+    "mode": {
+      "options": {
+        "contains": "enthält",
+        "exact": "exakt"
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "tagestyp": {
+        "state": {
+          "werktag": "Werktag",
+          "feiertag": "Feiertag",
+          "wochenende": "Wochenende"
+        }
+      },
+      "next_holiday": {
+        "name": "Nächster Feiertag"
+      },
+      "status": {
+        "name": "Status",
+        "state": {
+          "arbeit": "Arbeit",
+          "frei": "Frei",
+          "urlaub": "Urlaub"
+        }
+      }
+    },
+    "binary_sensor": {
+      "free_today": {
+        "name": "Frei heute"
+      },
+      "bridge_day": {
+        "name": "Brückentag"
+      },
+      "working": {
+        "name": "Arbeitet"
+      }
+    },
+    "calendar": {
+      "holidays": {
+        "name": "Feiertage"
+      }
+    }
+  },
+  "services": {
+    "check_date": {
+      "name": "Datum prüfen",
+      "description": "Liefert Tagestyp und Personenstatus für ein beliebiges Datum.",
+      "fields": {
+        "date": {
+          "name": "Datum",
+          "description": "Zu prüfender Tag."
+        }
+      }
+    }
+  },
+  "issues": {
+    "person_missing": {
+      "title": "Person nicht mehr vorhanden",
+      "description": "Die Person {person} existiert in Home Assistant nicht mehr. Entferne den Eintrag in der Tagestyp-Integration oder lege die Person neu an."
+    }
+  }
+}

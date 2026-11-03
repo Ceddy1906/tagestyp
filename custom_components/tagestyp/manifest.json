@@ -1,0 +1,19 @@
+{
+  "domain": "tagestyp",
+  "name": "Tagestyp & Arbeitstage",
+  "version": "0.1.2",
+  "documentation": "https://example.invalid/tagestyp",
+  "issue_tracker": "https://example.invalid/tagestyp/issues",
+  "codeowners": [],
+  "config_flow": true,
+  "integration_type": "service",
+  "iot_class": "calculated",
+  "requirements": [
+    "holidays>=0.70"
+  ],
+  "single_config_entry": true,
+  "dependencies": [
+    "calendar",
+    "person"
+  ]
+}

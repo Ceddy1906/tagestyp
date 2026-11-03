@@ -1,0 +1,186 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Tagestyp",
+        "description": "Country for public holidays.",
+        "data": {
+          "country": "Country"
+        }
+      },
+      "details": {
+        "title": "Region and options",
+        "data": {
+          "subdivision": "State / canton",
+          "language": "Holiday name language",
+          "extra_holidays": "Extra holidays",
+          "school_holidays": "Show school holidays"
+        },
+        "data_description": {
+          "extra_holidays": "One entry per line: DD.MM.YYYY or range DD.MM.YYYY,DD.MM.YYYY. YYYY-MM-DD also works."
+        }
+      }
+    },
+    "error": {
+      "invalid_subdivision": "Unknown state/canton.",
+      "invalid_extra_holidays": "Invalid extra holidays (use DD.MM.YYYY or DD.MM.YYYY,DD.MM.YYYY)."
+    },
+    "abort": {
+      "single_instance_allowed": "Only one entry is allowed. Add people there."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Settings",
+        "description": "The country cannot be changed.",
+        "data": {
+          "subdivision": "State / canton",
+          "language": "Holiday name language",
+          "extra_holidays": "Extra holidays",
+          "school_holidays": "Show school holidays"
+        },
+        "data_description": {
+          "extra_holidays": "One entry per line: DD.MM.YYYY or range DD.MM.YYYY,DD.MM.YYYY. YYYY-MM-DD also works."
+        }
+      }
+    },
+    "error": {
+      "invalid_subdivision": "Unknown state/canton.",
+      "invalid_extra_holidays": "Invalid extra holidays (use DD.MM.YYYY or DD.MM.YYYY,DD.MM.YYYY)."
+    }
+  },
+  "config_subentries": {
+    "person": {
+      "entry_type": "Person",
+      "initiate_flow": {
+        "user": "Add person",
+        "reconfigure": "Edit person"
+      },
+      "step": {
+        "user": {
+          "title": "Person",
+          "data": {
+            "person": "Person",
+            "calendar": "Calendar (optional)"
+          }
+        },
+        "menu": {
+          "title": "Rules for {person}",
+          "description": "Current rules:\n{rules}",
+          "menu_options": {
+            "edit_calendar": "Change calendar",
+            "add_rule": "Add rule",
+            "remove_rule": "Remove rule",
+            "finish": "Save"
+          }
+        },
+        "edit_calendar": {
+          "title": "Calendar",
+          "data": {
+            "calendar": "Calendar (optional)"
+          }
+        },
+        "add_rule": {
+          "title": "Add rule",
+          "data": {
+            "search": "Search string in event title",
+            "type": "Meaning",
+            "mode": "Match"
+          }
+        },
+        "remove_rule": {
+          "title": "Remove rules",
+          "data": {
+            "rules": "Rules to remove"
+          }
+        }
+      },
+      "error": {
+        "already_configured": "This person is already set up.",
+        "empty_search": "Search string must not be empty."
+      },
+      "abort": {
+        "reconfigure_successful": "Person saved."
+      }
+    }
+  },
+  "selector": {
+    "country": {
+      "options": {
+        "AT": "Austria",
+        "DE": "Germany",
+        "CH": "Switzerland"
+      }
+    },
+    "type": {
+      "options": {
+        "arbeit": "Work",
+        "frei": "Off",
+        "urlaub": "Vacation"
+      }
+    },
+    "mode": {
+      "options": {
+        "contains": "contains",
+        "exact": "exact"
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "tagestyp": {
+        "state": {
+          "werktag": "Workday",
+          "feiertag": "Public holiday",
+          "wochenende": "Weekend"
+        }
+      },
+      "next_holiday": {
+        "name": "Next holiday"
+      },
+      "status": {
+        "name": "Status",
+        "state": {
+          "arbeit": "Work",
+          "frei": "Off",
+          "urlaub": "Vacation"
+        }
+      }
+    },
+    "binary_sensor": {
+      "free_today": {
+        "name": "Off today"
+      },
+      "bridge_day": {
+        "name": "Bridge day"
+      },
+      "working": {
+        "name": "Working"
+      }
+    },
+    "calendar": {
+      "holidays": {
+        "name": "Holidays"
+      }
+    }
+  },
+  "services": {
+    "check_date": {
+      "name": "Check date",
+      "description": "Returns day type and person status for any date.",
+      "fields": {
+        "date": {
+          "name": "Date",
+          "description": "Day to check."
+        }
+      }
+    }
+  },
+  "issues": {
+    "person_missing": {
+      "title": "Person no longer exists",
+      "description": "The person {person} no longer exists in Home Assistant. Remove the entry in the Tagestyp integration or recreate the person."
+    }
+  }
+}
