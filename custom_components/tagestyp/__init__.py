@@ -68,6 +68,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: TagestypConfigEntry) -> 
     await coordinator.async_config_entry_first_refresh()
     entry.runtime_data = coordinator
     _update_person_issues(hass, coordinator, entry)
+    await coordinator.async_setup_school()
     coordinator.async_start_triggers()
     entry.async_on_unload(entry.add_update_listener(_async_reload_on_change))
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)

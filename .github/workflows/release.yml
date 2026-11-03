@@ -1,0 +1,52 @@
+name: Release
+
+# Erzeugt bei jedem Tag der Form v* automatisch einen GitHub-Release.
+# Die Release Notes stammen aus dem passenden Abschnitt in CHANGELOG.md.
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    # Nur auf GitHub ausführen (nicht in einer Gitea-Actions-Instanz)
+    if: github.server_url == 'https://github.com'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Repository auschecken
+        uses: actions/checkout@v4
+
+      - name: Tag mit Manifest-Version vergleichen
+        run: |
+          VERSION="$(python3 -c "import json; print(json.load(open('custom_components/tagestyp/manifest.json'))['version'])")"
+          TAG="${GITHUB_REF_NAME#v}"
+          if [ "$TAG" != "$VERSION" ]; then
+            echo "::error::Tag ${GITHUB_REF_NAME} passt nicht zur Version ${VERSION} in manifest.json"
+            exit 1
+          fi
+          echo "VERSION=${VERSION}" >> "$GITHUB_ENV"
+
+      - name: Release Notes aus CHANGELOG.md lesen
+        run: |
+          awk -v v="$VERSION" '
+            $0 ~ "^## " v "( |$)" { found = 1; next }
+            found && /^## / { exit }
+            found { print }
+          ' CHANGELOG.md > release_notes.md
+          if [ ! -s release_notes.md ]; then
+            echo "::error::Kein Abschnitt für Version ${VERSION} in CHANGELOG.md"
+            exit 1
+          fi
+
+      - name: Release erstellen
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" \
+            --title "$GITHUB_REF_NAME" \
+            --notes-file release_notes.md \
+            --verify-tag

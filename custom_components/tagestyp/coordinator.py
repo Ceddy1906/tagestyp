@@ -14,6 +14,7 @@ from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.event import (
     async_track_state_change_event,
     async_track_time_change,
+    async_track_time_interval,
 )
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 from homeassistant.util import dt as dt_util
@@ -23,6 +24,7 @@ from .const import (
     CONF_EXTRA_HOLIDAYS,
     CONF_LANGUAGE,
     CONF_RULES,
+    CONF_SCHOOL_HOLIDAYS,
     CONF_SUBDIVISION,
     CONF_COUNTRY,
     DOMAIN,
@@ -32,6 +34,7 @@ from .const import (
 from .engine import DaySnapshot, PersonConfig, compute_day, rules_from_data
 from .holidays_provider import HolidayLookup, build_lookup, format_date
 from .rules import CalendarEvent
+from .school_provider import SchoolHolidays
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -73,6 +76,15 @@ class TagestypCoordinator(DataUpdateCoordinator[TagestypData]):
             update_interval=timedelta(minutes=UPDATE_INTERVAL_MINUTES),
         )
         self.lookup = lookup
+        self.school: SchoolHolidays | None = None
+        if entry.options.get(CONF_SCHOOL_HOLIDAYS):
+            self.school = SchoolHolidays(
+                hass,
+                entry.entry_id,
+                entry.data[CONF_COUNTRY],
+                entry.options.get(CONF_SUBDIVISION),
+                entry.options.get(CONF_LANGUAGE, "de"),
+            )
         self.persons: dict[str, PersonConfig] = {}
         for sub in entry.subentries.values():
             if sub.subentry_type == SUBENTRY_PERSON:
@@ -97,6 +109,24 @@ class TagestypCoordinator(DataUpdateCoordinator[TagestypData]):
             opts.get(CONF_EXTRA_HOLIDAYS, []),
         )
         return cls(hass, entry, lookup)
+
+    async def async_setup_school(self) -> None:
+        """Cache laden; Abruf läuft im Hintergrund und danach täglich."""
+        if self.school is None:
+            return
+        school = self.school
+        await school.async_load_cache()
+
+        async def _refresh(*_: Any) -> None:
+            await school.async_refresh()
+            self.async_update_listeners()
+
+        self.config_entry.async_create_background_task(
+            self.hass, _refresh(), f"{DOMAIN}_school_refresh"
+        )
+        self.config_entry.async_on_unload(
+            async_track_time_interval(self.hass, _refresh, school.refresh_interval())
+        )
 
     @callback
     def async_start_triggers(self) -> None:

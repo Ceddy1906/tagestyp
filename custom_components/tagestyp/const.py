@@ -55,3 +55,9 @@ SUBDIVISION_NAMES: dict[str, dict[str, str]] = {
 }
 
 UPDATE_INTERVAL_MINUTES = 15
+
+# Schulferien (OpenHolidays)
+OPENHOLIDAYS_URL = "https://openholidaysapi.org/SchoolHolidays"
+SCHOOL_REFRESH_HOURS = 24
+SCHOOL_HTTP_TIMEOUT = 20
+SCHOOL_STORE_VERSION = 1

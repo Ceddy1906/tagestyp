@@ -157,6 +157,9 @@
       },
       "working": {
         "name": "Arbeitet"
+      },
+      "school_holiday": {
+        "name": "Schulferien"
       }
     },
     "calendar": {
