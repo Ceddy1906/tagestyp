@@ -139,6 +139,14 @@
       "next_holiday": {
         "name": "Next holiday"
       },
+      "status_tomorrow": {
+        "name": "Status tomorrow",
+        "state": {
+          "arbeit": "Work",
+          "frei": "Off",
+          "urlaub": "Vacation"
+        }
+      },
       "status": {
         "name": "Status",
         "state": {

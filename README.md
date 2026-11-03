@@ -92,6 +92,7 @@ Die Entity-IDs richten sich nach der Systemsprache von Home Assistant.
 | Feiertage (Kalender) | Feiertage als ganztägige Termine |
 | Schulferien (Binärsensor, optional) | an in den Ferien; Attribute `name`, `start`, `end`, `next_name`, `next_start`, `next_end`, `days_until_next`, `data_stale`, `last_updated` |
 | Status (Sensor, je Person) | `arbeit`, `frei` oder `urlaub`; Attribute `source`, `matched_rule`, `matched_event`, `configured_rules`, `tomorrow`, `day_after_tomorrow` |
+| Status morgen (Sensor, je Person) | wie *Status*, aber für den morgigen Tag; Attribute `source`, `matched_rule`, `matched_event`, `date` |
 | Arbeitet (Binärsensor, je Person) | an, wenn der Status `arbeit` ist |
 
 Das Attribut `source` zeigt, warum ein Status zustande kam: `regel` (eine Regel hat getroffen), `kein_termin` (Dienstplan ohne Termin) oder `tagestyp` (Rückfall auf den Tagestyp).

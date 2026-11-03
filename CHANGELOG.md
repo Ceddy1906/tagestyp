@@ -1,5 +1,16 @@
 # Änderungen
 
+## 0.3.0
+
+### Neu
+
+- **Status morgen:** Jede Person hat zusätzlich den Sensor „Status morgen“ (arbeit / frei / urlaub). Er nutzt dieselben Regeln wie der heutige Status und ist für Automationen am Vorabend gedacht.
+- **Icon und Logo** der Integration (Home Assistant 2026.3 oder neuer).
+
+### Hinweise
+
+- Nach dem Update Home Assistant vollständig neu starten.
+
 ## 0.2.0 – Erste Veröffentlichung
 
 ### Neu

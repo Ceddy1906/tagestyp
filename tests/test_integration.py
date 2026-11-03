@@ -167,3 +167,26 @@ async def test_no_event_means_off_for_schedule_person(hass, freezer: FrozenDateT
         "urlaub: Lissy Urlaub (contains)",
     ]
     assert st(hass, "binary_sensor", "working").state == "off"
+
+
+async def test_status_tomorrow_sensor(hass, freezer: FrozenDateTimeFactory):
+    freezer.move_to(datetime(2026, 11, 3, 8, 0, tzinfo=TZ))
+    await _setup(
+        hass,
+        events=[
+            CalendarEvent("Lissy Arbeiten", date(2026, 11, 3), date(2026, 11, 4)),
+            CalendarEvent("Lissy Urlaub", date(2026, 11, 4), date(2026, 11, 5)),
+        ],
+    )
+    assert st(hass, "sensor", "status").state == "arbeit"
+    tomorrow = st(hass, "sensor", "status_tomorrow")
+    assert tomorrow.state == "urlaub"
+    assert tomorrow.attributes["source"] == "regel"
+    assert tomorrow.attributes["date"] == "2026-11-04"
+    assert "tomorrow" not in tomorrow.attributes
+
+
+async def test_status_tomorrow_unavailable_when_calendar_fails(hass, freezer: FrozenDateTimeFactory):
+    freezer.move_to(datetime(2026, 11, 3, 8, 0, tzinfo=TZ))
+    await _setup(hass, events=None)
+    assert st(hass, "sensor", "status_tomorrow").state == "unavailable"

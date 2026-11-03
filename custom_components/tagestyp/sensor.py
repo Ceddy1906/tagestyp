@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from datetime import timedelta
 from typing import Any
 
 from homeassistant.components.sensor import SensorDeviceClass, SensorEntity
@@ -29,7 +30,10 @@ async def async_setup_entry(
     for sub in entry.subentries.values():
         if sub.subentry_type == SUBENTRY_PERSON:
             async_add_entities(
-                [PersonStatusSensor(coordinator, entry, sub, "status")],
+                [
+                    PersonStatusSensor(coordinator, entry, sub, "status"),
+                    PersonStatusTomorrowSensor(coordinator, entry, sub, "status_tomorrow"),
+                ],
                 config_subentry_id=sub.subentry_id,
             )
 
@@ -105,14 +109,25 @@ class PersonStatusSensor(PersonEntity, SensorEntity):
             return {"calendar": person.calendar if person else None, "configured_rules": configured}
         rule = status.matched_rule
         event = status.matched_event
-        tomorrow = self._status(self.coordinator.data.tomorrow)
-        after = self._status(self.coordinator.data.day_after)
-        return {
+        attrs = {
             "calendar": person.calendar if person else None,
             "configured_rules": configured,
             "source": status.source,
             "matched_rule": f"{rule.type.value}: {rule.search}" if rule else None,
             "matched_event": event.summary if event else None,
-            "tomorrow": tomorrow.state.value if tomorrow else None,
-            "day_after_tomorrow": after.state.value if after else None,
         }
+        if self._snapshot() is self.coordinator.data.today:
+            tomorrow = self._status(self.coordinator.data.tomorrow)
+            after = self._status(self.coordinator.data.day_after)
+            attrs["tomorrow"] = tomorrow.state.value if tomorrow else None
+            attrs["day_after_tomorrow"] = after.state.value if after else None
+        else:
+            attrs["date"] = (dt_util.now().date() + timedelta(days=1)).isoformat()
+        return attrs
+
+
+class PersonStatusTomorrowSensor(PersonStatusSensor):
+    """Status der Person für morgen (gleiche Regeln wie heute)."""
+
+    def _snapshot(self):
+        return self.coordinator.data.tomorrow

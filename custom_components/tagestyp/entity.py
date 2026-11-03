@@ -60,9 +60,13 @@ class PersonEntity(CoordinatorEntity[TagestypCoordinator]):
     def _status(self, snap: DaySnapshot) -> PersonStatus | None:
         return snap.persons.get(self._sub_id)
 
+    def _snapshot(self) -> DaySnapshot:
+        """Tag, auf den sich die Entität bezieht (Standard: heute)."""
+        return self.coordinator.data.today
+
     @property
     def status(self) -> PersonStatus | None:
-        return self._status(self.coordinator.data.today)
+        return self._status(self._snapshot())
 
     @property
     def available(self) -> bool:
